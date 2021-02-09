@@ -97,7 +97,8 @@ void button_loop()
         ttgo->displaySleep();
         ttgo->powerOff();
 
-        esp_sleep_enable_gpio_wakeup();
+        // esp_sleep_enable_gpio_wakeup();
+        esp_sleep_enable_touchpad_wakeup();
 
         // esp_deep_sleep_start(); // See readme... requires other configuration.
         esp_light_sleep_start();

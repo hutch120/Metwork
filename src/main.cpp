@@ -42,7 +42,7 @@ void loop()
   if (!isSleeping())
   {
     log_i("Main loop running ...");
-    // button_loop();
+    button_loop();
 
     espnow_loop();
 
