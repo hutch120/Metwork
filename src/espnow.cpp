@@ -5,7 +5,7 @@
 #include <esp_wifi.h>
 #include <TTGO.h>
 #include "esp_wifi_types.h" // RSSI signal strength
-#include "button.h"
+#include "power.h"
 
 int recv_count = 0;
 int sent_count = 0;
@@ -62,7 +62,7 @@ void receiveCallback(const uint8_t *macAddr, const uint8_t *data, int dataLen)
     char macStr[18];
     formatMacAddress(macAddr, macStr, 18);
     // debug log the message to the serial port
-    log_i("Received message from: %s - %s\n", macStr, buffer);
+    log_i("Received message from: %s - %s", macStr, buffer);
 
     recv_count++;
     RefreshScreen();
@@ -77,8 +77,8 @@ void sentCallback(const uint8_t *macAddr, esp_now_send_status_t status)
     }
     char macStr[18];
     formatMacAddress(macAddr, macStr, 18);
-    log_i("Last Packet Sent to: %s", macStr);
-    log_i("Last Packet Send Status: %s", status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+    // log_i("Last Packet Sent to: %s", macStr);
+    log_i("ESPNow broadcast: %s", status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 
     if (status == ESP_NOW_SEND_SUCCESS)
     {
@@ -93,6 +93,9 @@ void broadcast(const String &message)
     {
         return;
     }
+
+    log_i("broadcast...%s", message);
+
     // this will broadcast a message to everyone in range
     uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     esp_now_peer_info_t peerInfo = {};
@@ -165,11 +168,22 @@ void broadcast(const String &message)
     }
 }*/
 
+void SetTxPower(WiFiEvent_t event, WiFiEventInfo_t info)
+{
+    log_i("WIFI Tx power set to low power (short range) WIFI_POWER_MINUS_1dBm");
+    WiFi.setTxPower(WIFI_POWER_MINUS_1dBm); // WIFI_POWER_MINUS_1dBm WIFI_POWER_19_5dBm
+    int powerTx = WiFi.getTxPower();
+    log_i("WIFI Tx power now set to %d", powerTx);
+}
+
 void espnow_setup()
 {
-    //Set device in STA mode to begin with
+    WiFi.onEvent(SetTxPower, SYSTEM_EVENT_STA_START);
+
+    log_i("Set device in station mode. MAC Address: %s", WiFi.macAddress().c_str());
     WiFi.mode(WIFI_STA);
-    log_i("My MAC Address is: %s", WiFi.macAddress().c_str()); // https://www.arduino.cc/reference/en/language/variables/data-types/string/functions/c_str/
+
+    log_i("Ensure WIFI is disconnected from any access points for espnow.");
     WiFi.disconnect();
 
     //esp_wifi_set_promiscuous(true);
@@ -193,11 +207,10 @@ int touchCount = 0;
 
 void espnow_loop()
 {
-    log_i("broadcast...");
     /* 
-        protocol
+        protocol??
         [0-9] - user touching screen ticks ?? OR RATE OF TICK.. where tick rate increases over time.
         [network id] - Exterally created?? WIFI names?
     */
-    broadcast("5"); // touchCount
+    broadcast("test");
 }

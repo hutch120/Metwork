@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <TTGO.h>
 #include "espnow.h"
-#include "button.h"
+#include "power.h"
 
 // C++ object which will allow access to the functions of the Watch
 
@@ -34,19 +34,24 @@ void setup()
   ttgo->rtc->syncToSystem();
 
   espnow_setup();
-  button_setup();
+  power_setup();
 }
+
+int loopDelay = 2000; // Set slow for testing to be able to see changes, read logs, etc.
 
 void loop()
 {
   if (!isSleeping())
   {
     log_i("Main loop running ...");
-    button_loop();
-
+    power_loop();
     espnow_loop();
-
-    delay(5000);
+    delay(loopDelay);
   }
-  delay(1000);
+  else
+  {
+    log_i("Main loop sleeping ...");
+    power_loop();
+    delay(loopDelay);
+  }
 }
