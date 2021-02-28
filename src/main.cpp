@@ -33,11 +33,12 @@ void setup()
   //Synchronize time to system time
   ttgo->rtc->syncToSystem();
 
-  espnow_setup();
   power_setup();
+  espnow_setup();
+
 }
 
-int loopDelay = 2000; // Set slow for testing to be able to see changes, read logs, etc.
+int loopDelay = 3000; // Set slow for testing to be able to see changes, read logs, etc.
 
 void loop()
 {
