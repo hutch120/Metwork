@@ -6,5 +6,6 @@
 */
 void espnow_setup();
 void espnow_loop();
+String getStats();
 
 #endif // _ESPNOW_H

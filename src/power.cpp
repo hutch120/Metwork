@@ -47,21 +47,6 @@ void print_wakeup_reason()
     }
 }
 
-// Execute this function when Touch Pad in pressed
-void touchCallback()
-{
-    // wake up on next loop
-    if (sleeping)
-    {
-        log_i("touchCallback wake up on next loop");
-        buttonPressed = true;
-    }
-    else
-    {
-        log_i("touchCallback");
-    }
-}
-
 void power_setup()
 {
     sleeping = false;
@@ -73,8 +58,6 @@ void power_setup()
     pinMode(AXP202_INT, INPUT_PULLUP);
     attachInterrupt(
         AXP202_INT, [] { buttonPressed = true; }, FALLING);
-
-    touchAttachInterrupt(TOUCH_INT, touchCallback, Threshold);
 
     // Must be enabled first, and then clear the interrupt status,
     // otherwise abnormal
@@ -91,14 +74,15 @@ void power_setup()
     log_i("esp_sleep_enable_touchpad_wakeup_res %d", esp_sleep_enable_touchpad_wakeup_res);
 }
 
-void buttonSleep()
+void sleep()
 {
-    log_i("Button pressed. Was awake.. put device to sleep ...");
+    log_i("Going to sleep ...");
 
     TTGOClass *ttgo = TTGOClass::getWatch();
-    ttgo->tft->fillScreen(TFT_RED);
-    ttgo->tft->drawString("Sleep Now...", 10, 50, 2);
-    delay(500);
+
+    //ttgo->tft->fillScreen(TFT_RED);
+    //ttgo->tft->drawString("Sleep Now...", 10, 50, 2);
+    //delay(500);
 
     esp_err_t esp_wifi_stop_res = esp_wifi_stop();
     log_i("esp_wifi_stop_res %d", esp_wifi_stop_res);
@@ -112,12 +96,14 @@ void buttonSleep()
     Serial.flush();
     // esp_deep_sleep_start(); // See readme... requires other configuration.
     ttgo->powerOff();
+    
+    sleeping = true;
     // esp_light_sleep_start();
 }
 
-void buttonWake()
+void wakeUp()
 {
-    log_i("Button pressed. Was asleep.. wake up device ...");
+    log_i("Wake up device ...");
 
     TTGOClass *ttgo = TTGOClass::getWatch();
 
@@ -129,25 +115,25 @@ void buttonWake()
     ttgo->displayWakeup();
     ttgo->bl->adjust(100);
 
-    ttgo->tft->fillScreen(TFT_RED);
-    ttgo->tft->drawString("Waking up...", 10, 50, 2);
-    espnow_setup();
+    sleeping = false;
 }
 
-void power_loop()
+void button_loop()
 {
     // Wait for the power button to be pressed
     if (buttonPressed)
     {
         buttonPressed = false;
+
         // After the AXP202 interrupt is triggered, the interrupt status must be cleared,
         // otherwise the next interrupt will not be triggered
         power->clearIRQ();
 
         sleeping = !sleeping;
+
         if (sleeping)
-            buttonSleep();
+            sleep();
         if (!sleeping)
-            buttonWake();
+            wakeUp();
     }
 }

@@ -6,9 +6,10 @@
 #include <TTGO.h>
 #include "esp_wifi_types.h" // RSSI signal strength
 #include "power.h"
+#include "ui.h"
 
-int recv_count = 0;
-int sent_count = 0;
+int tickReceived = 0;
+int tickSent = 0;
 
 uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 //uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x7F, 0xCE, 0xF9};
@@ -17,36 +18,12 @@ const wifi_promiscuous_filter_t filt = {
     .filter_mask=WIFI_PROMIS_FILTER_MASK_ALL
 };
 
-void refreshScreen()
+String getStats()
 {
-    if (sent_count > 99)
-    {
-        sent_count = 1;
-    }
+    char result[32];
+    snprintf(result, 32, "%d/%d", tickSent, tickReceived);
+    return String(result);
 
-    if (recv_count > 99)
-    {
-        recv_count = 1;
-    }
-
-    TTGOClass *ttgo = TTGOClass::getWatch();
-    ttgo->tft->fillScreen(TFT_RED);
-    // ttgo->tft->fillRect(20, 100, 200, 85, TFT_RED);
-    ttgo->tft->setTextColor(TFT_WHITE);
-
-    ttgo->tft->drawString(F("METWORK"), 1, 1);
-
-    ttgo->tft->drawString(F("S"), 10, 45);
-    ttgo->tft->drawNumber(sent_count, 80, 40, 6);
-
-    ttgo->tft->drawString(F("R"), 10, 135);
-    ttgo->tft->drawNumber(recv_count, 80, 130, 6);
-
-    int battery_percentage = ttgo->power->getBattPercentage();
-    String battPer = "";
-    battPer += battery_percentage;
-    battPer += "%";
-    ttgo->tft->drawString(battPer, 160, 1, 2);
 }
 
 void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
@@ -77,8 +54,8 @@ void onDataReceived(const uint8_t *macAddr, const uint8_t *data, int dataLen)
 
     // log_i("Received message from: %s - %s", macStr, buffer);
 
-    recv_count++;
-    refreshScreen();
+    tickReceived++;
+    drawStatsUI();
 }
 
 // callback when data is sent
@@ -97,8 +74,8 @@ void onDataSent(const uint8_t *macAddr, esp_now_send_status_t status)
 
     if (status == ESP_NOW_SEND_SUCCESS)
     {
-        sent_count++;
-        refreshScreen();
+        tickSent++;
+        drawStatsUI();
     }
 }
 
@@ -239,16 +216,12 @@ void espnow_setup()
         esp_now_register_send_cb(onDataSent);
 
         log_i("ESPNow callbacks registered.");
-
-        refreshScreen();
     }
     else
     {
         log_i("ESPNow initialization failed.");
     }
 }
-
-int touchCount = 0;
 
 void espnow_loop()
 {

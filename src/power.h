@@ -7,7 +7,10 @@
  * Handle the physical button press on the side of the T-Watch 2020
  */
 void power_setup();
-void power_loop();
+void button_loop();
 bool isSleeping();
+
+void wakeUp();
+void sleep();
 
 #endif // _POWER_H
