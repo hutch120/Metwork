@@ -34,7 +34,7 @@ void onTouchEnd()
     tickTouch = 0;
 }
 
-void touch_setup()
+void initializeTouch()
 {
     log_i("Setting up touch interactivity.");
 
@@ -53,7 +53,7 @@ void touch_loop()
             onTouchStart();
         }
         tickTouch++;
-        log_i("Touch count %d", tickTouch);
+        // log_i("Touch count %d", tickTouch);
     }
     else {
         if (touched == true) {

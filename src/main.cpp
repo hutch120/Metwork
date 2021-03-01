@@ -26,10 +26,6 @@ void setup()
   ttgo->begin();
 
   ttgo->openBL();
-  // Use SPI_eTFT library to display text on screen
-  ttgo->tft->setTextFont(2);
-  ttgo->tft->setTextSize(2);
-  ttgo->tft->setTextColor(TFT_GREEN);
 
   //Check if the RTC clock matches, if not, use compile time
   ttgo->rtc->check();
@@ -37,9 +33,10 @@ void setup()
   //Synchronize time to system time
   ttgo->rtc->syncToSystem();
 
+  initializeUI();
   power_setup();
   espnow_setup();
-  touch_setup();
+  initializeTouch();
 
   tick = 0;
 
@@ -63,9 +60,11 @@ void loop()
 
       // touched
       if (getTickTouch() == 1) {
-        drawTouchUI();
         drawStatsUI();
+        initializeTouchUI();
       }
+
+      drawTouchUI();
 
       if (tick % 5 == 0 || getTickTouch() == 1) {
         // every 1s
@@ -79,7 +78,7 @@ void loop()
       // not touched
       tickSleepTimeout++;
       if (tickSleepTimeout == 1) { 
-        drawTouchUI();
+        removeTouchUI();
         drawStatsUI();
       }
 
