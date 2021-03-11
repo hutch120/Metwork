@@ -1,4 +1,5 @@
 #include "config.h"
+
 #include <Arduino.h>
 #include <esp_now.h>
 #include <WiFi.h>
@@ -6,6 +7,7 @@
 #include <TTGO.h>
 #include "esp_wifi_types.h" // RSSI signal strength
 #include "power.h"
+#include "sound.h"
 #include "ui.h"
 
 int tickReceived = 0;
@@ -15,15 +17,13 @@ uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 //uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x7F, 0xCE, 0xF9};
 
 const wifi_promiscuous_filter_t filt = {
-    .filter_mask=WIFI_PROMIS_FILTER_MASK_ALL
-};
+    .filter_mask = WIFI_PROMIS_FILTER_MASK_ALL};
 
 String getStats()
 {
     char result[32];
     snprintf(result, 32, "%d/%d", tickSent, tickReceived);
     return String(result);
-
 }
 
 void formatMacAddress(const uint8_t *macAddr, char *buffer, int maxLength)
@@ -204,7 +204,7 @@ void espnow_setup()
         peerInfo.channel = 1;
         peerInfo.ifidx = WIFI_IF_STA;
         peerInfo.encrypt = false;
-        
+
         if (!esp_now_is_peer_exist(broadcastAddress))
         {
             log_i("Adding peer 0xffffffffff");
@@ -231,9 +231,10 @@ void espnow_loop()
         [network id] - Exterally created?? WIFI names?
     */
 
-   // esp_now_unregister_recv_cb();
-   // esp_now_register_recv_cb(onDataReceived);
+    // esp_now_unregister_recv_cb();
+    // esp_now_register_recv_cb(onDataReceived);
 
     // log_i("WiFi.isConnected = %d", WiFi.isConnected());
     broadcast();
+    sound_play_beep();
 }

@@ -96,7 +96,7 @@ void sleep()
     Serial.flush();
     // esp_deep_sleep_start(); // See readme... requires other configuration.
     ttgo->powerOff();
-    
+
     sleeping = true;
     // esp_light_sleep_start();
 }

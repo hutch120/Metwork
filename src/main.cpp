@@ -4,6 +4,7 @@
 #include <TTGO.h>
 #include "espnow.h"
 #include "power.h"
+#include "sound.h"
 #include "touch.h"
 #include "ui.h"
 
@@ -36,10 +37,10 @@ void setup()
   initializeUI();
   power_setup();
   espnow_setup();
+  sound_setup();
   initializeTouch();
 
   tick = 0;
-
 }
 
 void loop()
@@ -54,53 +55,59 @@ void loop()
 
     // log_i("Touch loop...");
     touch_loop();
+    sound_loop();
 
     // check for sleep timeout
-    if (isTouched()) {
+    if (isTouched())
+    {
 
       // touched
-      if (getTickTouch() == 1) {
+      if (getTickTouch() == 1)
+      {
         drawStatsUI();
         initializeTouchUI();
       }
 
       drawTouchUI();
 
-      if (tick % 5 == 0 || getTickTouch() == 1) {
+      if (tick % 5 == 0 || getTickTouch() == 1)
+      {
         // every 1s
         // log_i("Comms loop...");
         espnow_loop();
       }
       tickSleepTimeout = 0;
     }
-    else {
+    else
+    {
 
       // not touched
       tickSleepTimeout++;
-      if (tickSleepTimeout == 1) { 
+      if (tickSleepTimeout == 1)
+      {
         removeTouchUI();
         drawStatsUI();
       }
 
       /// log_i("No touch ... tickSleepTimeout %d", tickSleepTimeout);
 
-      if (tickSleepTimeout > 500) {
+      if (tickSleepTimeout > 500)
+      {
         // timeout after 5s
         tickSleepTimeout = 0;
         sleep();
       }
 
-      if (tick % 10 == 0) {
+      if (tick % 10 == 0)
+      {
         // every 1s
         // log_i("Power loop...");
         button_loop();
-      }    
-
+      }
     }
 
     tick = tick % 300;
     delay(100);
-
   }
   else
   {
@@ -109,10 +116,12 @@ void loop()
 
     // log_i("Touch loop...");
     touch_loop();
-     
-    if (isTouched()) {
+
+    if (isTouched())
+    {
       wakeUp();
       espnow_setup();
+      sound_setup();
       drawWakeUpUI();
     }
 
