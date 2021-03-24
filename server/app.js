@@ -4,6 +4,7 @@ const port = 5000
 const neatCsv = require('neat-csv')
 const fs = require('fs').promises;
 
+// loadStationsFromFile
 async function loadStationsFromFile() {
     try {
         const csvString = await fs.readFile('data.csv', 'utf8')
@@ -16,8 +17,9 @@ async function loadStationsFromFile() {
     return null
 }
 
-app.use(express.static('client/build'))
+app.use(express.static('client/build')) // Build the react site to serve from this app.
 
+// TODO: Test if this should be removed if express.static serves the React index.html file.
 app.get('/', (req, res) => {
     res.send('This is an API ... maybe you were looking for the React site? Maybe check port number in browser?')
 })

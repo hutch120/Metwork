@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import logo from './logo.svg';
 import './App.css';
 
+// Note the proxy flag in package.json is how fetch works... TODO: test on the build version.
 function App() {
 
   const [stations, setStations] = useState()
