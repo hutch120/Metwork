@@ -40,7 +40,7 @@ If you don't kill the conflicting programs there were a lot of missing messages 
 
 ```
 sudo airmon-ng check kill
-sudo airmon-ng start wlan0 --channel 1
+sudo airmon-ng start wlan0 1
 ```
 
 Run `ifconfig` to check that the new monitor interface is ready... it should be called wlan0mon.
@@ -48,7 +48,7 @@ Run `ifconfig` to check that the new monitor interface is ready... it should be 
 Now you can either run Wireshark (`startx` -> Under the Internet menu -> change Wireshark shortcut... add `sudo`), 
 or run `sudo airodump-ng` from command line. [Ref](https://tools.kali.org/wireless-attacks/airodump-ng)
 
-For Wireshark, pick the wlan0mon interface and set the filter to `wlan.fc.type_subtype == 0x000d` (This is a filter for Action Frames)
+For Wireshark, pick the wlan0mon interface and set the filter to `wlan.fc.type_subtype == 13` (This is a filter for Action Frames or 0x000d)
 
 References:
 - https://null-byte.wonderhowto.com/how-to/enable-monitor-mode-packet-injection-raspberry-pi-0189378/
