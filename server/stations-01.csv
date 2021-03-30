@@ -1,0 +1,11 @@
+
+BSSID, First time seen, Last time seen, channel, Speed, Privacy, Cipher, Authentication, Power, # beacons, # IV, LAN IP, ID-length, ESSID, Key
+98:DA:C4:A8:C2:15, 2021-03-30 04:03:58, 2021-03-30 04:04:25,  4, 130, WPA2, CCMP, PSK, -81,       16,        2,   0.  0.  0.  0,   4, SSJL, 
+44:94:FC:3A:16:D6, 2021-03-30 04:03:56, 2021-03-30 04:04:25,  4, 130, WPA2, CCMP, PSK, -72,       14,        0,   0.  0.  0.  0,   8, SSJL_EXT, 
+
+Station MAC, First time seen, Last time seen, Power, # packets, BSSID, Probed ESSIDs
+F4:F5:D8:A8:83:2C, 2021-03-30 04:03:58, 2021-03-30 04:04:01, -80,       12, 98:DA:C4:A8:C2:15,SSJL
+F8:DA:0C:2C:D9:AE, 2021-03-30 04:04:20, 2021-03-30 04:04:20, -71,        4, (not associated) ,
+3C:61:05:0D:8B:00, 2021-03-30 04:04:00, 2021-03-30 04:04:09, -58,        7, (not associated) ,
+3C:61:05:0D:75:24, 2021-03-30 04:04:05, 2021-03-30 04:04:09, -58,        6, (not associated) ,
+
