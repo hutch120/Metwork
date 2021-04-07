@@ -10,10 +10,12 @@ const toLower = require('lodash/toLower')
 const startsWith = require('lodash/startsWith')
 const flatMap = require('lodash/flatMap')
 
+let totalPacketsTWatchLastCall = 0
+
 // loadStationsFromFile
 async function loadData() {
     try {
-        const csvString = await fs.readFile('stations-01.csv', 'utf8')
+        const csvString = await fs.readFile('./stations-01.csv', 'utf8')
         let csvStations = csvString.substring(csvString.indexOf('Station MAC'), csvString.length)
         csvStations = csvStations.split(', ').join(',')
         csvStations = csvStations.split('# ').join('')
@@ -88,7 +90,11 @@ async function loadData() {
             return []
         })
 
-        return { stations, meta: { totalPacketsTWatch } }
+
+        const returnData = { /*stations,*/ meta: { totalPacketsTWatch, totalPacketsTWatchLastCall, totalPacketsTWatchDiff: totalPacketsTWatch - totalPacketsTWatchLastCall } }
+        totalPacketsTWatchLastCall = totalPacketsTWatch
+        console.log('totalPacketsTWatch', totalPacketsTWatch)
+        return returnData
     } catch (e) {
         console.log('error', e)
     }
@@ -96,11 +102,6 @@ async function loadData() {
 }
 
 app.use(express.static('client/build')) // Build the react site to serve from this app.
-
-// TODO: Test if this should be removed if express.static serves the React index.html file.
-app.get('/', (req, res) => {
-    res.send('This is an API ... maybe you were looking for the React site? Maybe check port number in browser?')
-})
 
 app.get('/stations', async (req, res) => {
     const data = await loadData()
